@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,14 +19,16 @@ public class Add_notes extends AppCompatActivity {
 
     private AppDatabase database;
     private NotesDao noteDao;
+    EditText title;
+    TextInputEditText descripation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         config();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_notes);
-        EditText title = findViewById(R.id.title);
-        TextInputEditText descripation = findViewById(R.id.messagebox);
+         title = findViewById(R.id.title);
+         descripation = findViewById(R.id.messagebox);
         ImageView savebutton = findViewById(R.id.savebutton);
         ImageView backbutton = findViewById(R.id.backbutton);
 
@@ -39,7 +42,7 @@ public class Add_notes extends AppCompatActivity {
         backbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onBackPressed();
+              onBackPressed();
             }
         });
         database = AppDatabase.getInstance(this);
@@ -58,13 +61,19 @@ public class Add_notes extends AppCompatActivity {
                     notes note = new notes(titletext,descripat);
                     noteDao.insert(note);
                 }
-
                 onBackPressed();
             }
         });
 
 
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
+
     private void config() {
         findViewById(android.R.id.content).setTransitionName("fab");
 
