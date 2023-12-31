@@ -20,11 +20,12 @@ public interface NotesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(notes note);
-    @Query("UPDATE notes_table set title = :titleText,descripation=:discri where id=:id")
-    void update(String titleText,String discri,String id);
+    @Query("UPDATE notes_table set title = :titleText,descripation=:discri,date=:date, time=:time where id=:id")
+    void update(String titleText,String discri, String time,String date,int id);
 
     @Delete
     void delete(notes note);
+
 
     @Query("DELETE FROM notes_table")
     void deleteAllUsers();

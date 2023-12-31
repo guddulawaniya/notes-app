@@ -1,9 +1,19 @@
 package com.example.secure_notes;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.view.View;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.lifecycle.Observer;
@@ -11,16 +21,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -34,14 +34,16 @@ public class MainActivity extends AppCompatActivity {
     private List<notes> recyclerDataArrayList;
     myAdapter adapter;
     RecyclerView recyclerview;
+    private static final int ALARM_REQUEST_CODE = 123;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         config();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         CardView addbutton = findViewById(R.id.addbutton);
-         recyclerview = findViewById(R.id.recyclerview);
-       TextView emptytext = findViewById(R.id.emptytext);
+        recyclerview = findViewById(R.id.recyclerview);
+        TextView emptytext = findViewById(R.id.emptytext);
 
 
         recyclerDataArrayList = new ArrayList<>();
@@ -53,27 +55,31 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+        long intervalMillis = 60 * 1000; // 60 seconds
+        long startTime = SystemClock.elapsedRealtime(); // Start immediately
+
+        // Use setRepeating for repeating alarms
+
+
+
         noteDao.getAlldata().observe(MainActivity.this, new Observer<List<notes>>() {
             @Override
             public void onChanged(List<notes> notes) {
 
-                recyclerDataArrayList= notes;
+                recyclerDataArrayList = notes;
                 Collections.reverse(recyclerDataArrayList);
 
 
-                adapter = new myAdapter(recyclerDataArrayList,MainActivity.this);
+                adapter = new myAdapter(recyclerDataArrayList, MainActivity.this);
                 recyclerview.setAdapter(adapter);
 
             }
         });
 
-        if (recyclerDataArrayList.isEmpty())
-        {
-            emptytext.setVisibility(View.VISIBLE);
-        }
-        else
-        {
+        if (!recyclerDataArrayList.isEmpty()) {
             emptytext.setVisibility(View.GONE);
+        } else {
+            emptytext.setVisibility(View.VISIBLE);
         }
 
         addbutton.setOnClickListener(new View.OnClickListener() {
@@ -115,9 +121,26 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(recyclerview);
     }
+
     private void config() {
-        setExitSharedElementCallback(new SharedElementCallback() {});
+        setExitSharedElementCallback(new SharedElementCallback() {
+        });
         getWindow().setSharedElementsUseOverlay(false);
 
     }
+
+
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Cancel the alarm when the activity is destroyed
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, ALARM_REQUEST_CODE, alarmIntent, PendingIntent.FLAG_MUTABLE);
+        alarmManager.cancel(pendingIntent);
+    }
+
+
 }

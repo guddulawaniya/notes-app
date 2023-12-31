@@ -40,6 +40,8 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.viewholder> {
         notes module = list.get(position);
         holder.title.setText(module.getText());
         holder.descripation.setText(module.getDescri());
+        holder.date.setText(module.getDate());
+        holder.time.setText(module.getTime());
 
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -48,8 +50,11 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.viewholder> {
 
                 Intent intent = new Intent(context, Add_notes.class);
                 Bundle bundle = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, holder.itemView, "fab").toBundle();
+                intent.putExtra("id",module.getId());
                 intent.putExtra("title",module.getText());
                 intent.putExtra("ds",module.getDescri());
+                intent.putExtra("date",module.getDate());
+                intent.putExtra("time",module.getTime());
                 context.startActivity(intent,bundle);
             }
         });
@@ -63,12 +68,14 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.viewholder> {
 
     public class viewholder extends RecyclerView.ViewHolder {
 
-        TextView title,descripation;
+        TextView title,descripation,date,time;
 
         public viewholder(@NonNull View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.titletext);
             descripation = itemView.findViewById(R.id.descripation);
+            date = itemView.findViewById(R.id.date);
+            time = itemView.findViewById(R.id.time);
 
         }
     }

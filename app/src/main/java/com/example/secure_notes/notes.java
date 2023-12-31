@@ -15,10 +15,42 @@ public class notes {
     @ColumnInfo(name = "descripation")
     String descri;
 
+    @ColumnInfo(name = "date")
+    String date;
 
-    public notes(String text, String descri) {
+    @ColumnInfo(name = "time")
+    String time;
+
+
+    public notes( String text, String descri, String date, String time) {
         this.text = text;
         this.descri = descri;
+        this.date = date;
+        this.time = time;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getText() {
